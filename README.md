@@ -72,6 +72,8 @@ Two modes, one contract:
 
 - Bring your own bill: enter your own itemized charges and EOB lines and run the
   same deterministic pipeline on them. Processed in memory only, never stored.
+- Email sync: pull bills and EOBs straight from your inbox instead of typing
+  them in.
 
 ## Disclaimer
 
