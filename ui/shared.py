@@ -12,6 +12,13 @@ def md(text):
     return str(text).replace("$", r"\$")
 
 
+def h(text):
+    """HTML-escape for values rendered inside raw HTML blocks (no KaTeX there,
+    so a backslash escape would show literally)."""
+    import html as _htmllib
+    return _htmllib.escape(str(text))
+
+
 def inject_css():
     st.markdown(
         """
