@@ -109,3 +109,14 @@ else:
     if c3.button("Start over", use_container_width=True):
         reset_all()
         st.rerun()
+
+with st.expander("🔜 Bring your own bill: on the roadmap"):
+    st.write(
+        "Today BillRx runs on a fixed synthetic demo case, which is what makes every "
+        "number on this page verifiable end to end. The next step is letting you bring "
+        "your own bill: enter your itemized charges and EOB lines, and the same pipeline "
+        "takes over from there. Deterministic code checks every dollar, the Reviewer "
+        "challenges each candidate finding against its lookup tools, and nothing is "
+        "drafted until you approve it. Your data would be processed in memory only and "
+        "never stored."
+    )
