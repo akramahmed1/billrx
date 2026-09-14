@@ -60,7 +60,8 @@ def require_approved():
 
 def reset_all():
     res = st.session_state.get("res")
-    for k in ("res", "approved", "final_draft", "final_phone",
+    for k in ("res", "approved", "approved_count", "approved_ids",
+              "final_draft", "final_phone",
               "script_choice", "choice_asked", "just_ran", "kit_toasted"):
         st.session_state.pop(k, None)
     if res is not None:
