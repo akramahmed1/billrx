@@ -6,10 +6,11 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import streamlit as st
 
-from ui.shared import inject_css, md, reset_all, disclaimer
+from ui.shared import inject_css, md, reset_all, disclaimer, step_kicker
 from src.pipeline import Pipeline
 
 inject_css()
+step_kicker(1, "Your case")
 
 # Toast from the run that just completed (shown once, on the rerun after the audit).
 if st.session_state.pop("just_ran", False):
