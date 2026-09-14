@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="560" viewBox="0 0 1600 560" font-family="DejaVu Sans, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 9 3, 0 6" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1600" height="560" fill="#ffffff"/>
+
+  <text x="800" y="42" text-anchor="middle" font-size="28" font-weight="bold" fill="#0f172a">BillRx Architecture</text>
+  <text x="800" y="66" text-anchor="middle" font-size="14" fill="#64748b">An evidence-first agent that helps people investigate confusing medical bills</text>
+
+  <!-- callout above checker -->
+  <rect x="450" y="80" width="260" height="24" rx="12" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <text x="580" y="97" text-anchor="middle" font-size="12" font-style="italic" fill="#92400e">the model never calculates the money</text>
+
+  <!-- stage boxes -->
+  <g font-size="15" font-weight="bold" fill="#0f172a">
+    <rect x="60" y="115" width="160" height="120" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+    <text x="140" y="165" text-anchor="middle">Synthetic bill</text>
+    <text x="140" y="187" text-anchor="middle">+ EOB</text>
+    <text x="140" y="212" text-anchor="middle" font-size="11" font-weight="normal" fill="#15803d">fictional data in</text>
+
+    <rect x="280" y="115" width="160" height="120" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+    <text x="360" y="168" text-anchor="middle">Extractor</text>
+    <text x="360" y="212" text-anchor="middle" font-size="11" font-weight="normal" fill="#1d4ed8">Strands agent</text>
+
+    <rect x="500" y="115" width="160" height="120" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="3"/>
+    <text x="580" y="160" text-anchor="middle">Deterministic</text>
+    <text x="580" y="182" text-anchor="middle">Checker</text>
+    <text x="580" y="212" text-anchor="middle" font-size="11" font-weight="normal" fill="#92400e">pure Python, no LLM</text>
+
+    <rect x="720" y="115" width="160" height="120" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+    <text x="800" y="160" text-anchor="middle">Reviewer</text>
+    <text x="800" y="182" text-anchor="middle">Agent</text>
+    <text x="800" y="212" text-anchor="middle" font-size="11" font-weight="normal" fill="#1d4ed8">Strands agent</text>
+
+    <rect x="940" y="115" width="160" height="120" rx="10" fill="#f1f5f9" stroke="#64748b" stroke-width="2"/>
+    <text x="1020" y="168" text-anchor="middle">Drafter</text>
+    <text x="1020" y="212" text-anchor="middle" font-size="11" font-weight="normal" fill="#475569">templates + reasons</text>
+
+    <rect x="1160" y="115" width="160" height="120" rx="10" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+    <text x="1240" y="160" text-anchor="middle">Approval</text>
+    <text x="1240" y="182" text-anchor="middle">Gate</text>
+    <text x="1240" y="212" text-anchor="middle" font-size="11" font-weight="normal" fill="#6d28d9">human approves</text>
+
+    <rect x="1380" y="115" width="160" height="120" rx="10" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+    <text x="1460" y="160" text-anchor="middle">Dispute</text>
+    <text x="1460" y="182" text-anchor="middle">packet</text>
+    <text x="1460" y="212" text-anchor="middle" font-size="11" font-weight="normal" fill="#0369a1">appeal + phone script</text>
+  </g>
+
+  <!-- arrows -->
+  <g stroke="#475569" stroke-width="2" marker-end="url(#arr)">
+    <line x1="222" y1="175" x2="278" y2="175"/>
+    <line x1="442" y1="175" x2="498" y2="175"/>
+    <line x1="662" y1="175" x2="718" y2="175"/>
+    <line x1="882" y1="175" x2="938" y2="175"/>
+    <line x1="1102" y1="175" x2="1158" y2="175"/>
+    <line x1="1322" y1="175" x2="1378" y2="175"/>
+  </g>
+  <g font-size="11" fill="#475569" text-anchor="middle">
+    <text x="250" y="158">lines</text>
+    <text x="470" y="158">4 findings</text>
+    <text x="690" y="158">verdicts</text>
+    <text x="910" y="158">draft</text>
+    <text x="1130" y="158">approved</text>
+    <text x="1350" y="158">packet</text>
+  </g>
+
+  <!-- reviewer tools -->
+  <line x1="800" y1="235" x2="800" y2="252" stroke="#2563eb" stroke-width="2" stroke-dasharray="5,4"/>
+  <rect x="700" y="252" width="200" height="104" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <text x="800" y="272" text-anchor="middle" font-size="11" font-weight="bold" fill="#1d4ed8">lookup tools (facts only)</text>
+  <g font-size="11" font-family="DejaVu Sans Mono, monospace" fill="#1e3a8a" text-anchor="middle">
+    <text x="800" y="294">lookup_ncci_edit</text>
+    <text x="800" y="314">lookup_eob_remark</text>
+    <text x="800" y="334">inspect_evidence</text>
+  </g>
+
+  <!-- audit ledger bar -->
+  <rect x="60" y="392" width="1480" height="48" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="800" y="421" text-anchor="middle" font-size="13" font-weight="bold" fill="#334155">Audit ledger: every stage emits trace events, visible in the UI sidebar and saved as a run log</text>
+
+  <!-- footer -->
+  <text x="800" y="478" text-anchor="middle" font-size="11" fill="#94a3b8">Research prototype. All data synthetic and fictional. BillRx does not determine whether a real bill is incorrect and does not provide medical, insurance, or legal advice.</text>
+  <text x="800" y="500" text-anchor="middle" font-size="11" fill="#94a3b8">Built with the Strands Agents SDK &#183; Demo mode: mock (deterministic) &#183; Live mode: Amazon Bedrock</text>
+</svg>
