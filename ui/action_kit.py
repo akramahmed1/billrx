@@ -6,11 +6,12 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import streamlit as st
 
-from ui.shared import inject_css, md, require_result, require_approved, reset_all
+from ui.shared import inject_css, md, require_result, require_approved, reset_all, step_kicker
 
 inject_css()
 res = require_result()
 require_approved()
+step_kicker(4, "Action kit")
 
 st.header("Your action kit")
 n_approved = st.session_state.get("approved_count", 0)
