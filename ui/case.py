@@ -6,7 +6,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import streamlit as st
 
-from ui.shared import inject_css, md, reset_all, disclaimer, step_kicker
+from ui.shared import h, inject_css, md, reset_all, disclaimer, step_kicker
 from src.pipeline import Pipeline
 
 inject_css()
@@ -84,13 +84,13 @@ else:
         f"""
         <div class="rx-cards">
           <div class="rx-card"><div class="rx-label">Hospital billed</div>
-            <div class="rx-bignum">{md(f'${res.bill_total:,.2f}')}</div></div>
+            <div class="rx-bignum">{h(f'${res.bill_total:,.2f}')}</div></div>
           <div class="rx-card"><div class="rx-label">Insurer allowed</div>
-            <div class="rx-bignum">{md(f'${res.eob_allowed:,.2f}')}</div></div>
+            <div class="rx-bignum">{h(f'${res.eob_allowed:,.2f}')}</div></div>
           <div class="rx-card"><div class="rx-label">Statement asks you to pay</div>
-            <div class="rx-bignum">{md(f'${res.statement_balance:,.2f}')}</div></div>
+            <div class="rx-bignum">{h(f'${res.statement_balance:,.2f}')}</div></div>
           <div class="rx-card"><div class="rx-label">EOB says you owe</div>
-            <div class="rx-bignum">{md(f'${res.eob_owes:,.2f}')}</div></div>
+            <div class="rx-bignum">{h(f'${res.eob_owes:,.2f}')}</div></div>
         </div>
         """,
         unsafe_allow_html=True,
