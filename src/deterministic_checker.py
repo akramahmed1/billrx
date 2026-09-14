@@ -32,7 +32,7 @@ def check_bill_total(lines: list[BillLine], stated_total: Decimal) -> list[Candi
             question="Can you confirm the correct statement total? The line items add up "
                      "to a different amount than the printed total.",
             evidence=[f"Bill p.1, lines {lines[0].line_no}-{lines[-1].line_no}",
-                      f"Stated total ${stated_total}"],
+                      f"Stated total ${stated_total:,.2f}"],
             amount_at_stake=abs(total - stated_total),
         )]
     return []
@@ -53,7 +53,7 @@ def check_duplicates(lines: list[BillLine]) -> list[CandidateFinding]:
                          "services on the same date?",
                 evidence=[f"Bill p.{first.page}, line {first.line_no}",
                           f"Bill p.{ln.page}, line {ln.line_no}",
-                          f"Same code {ln.code}, same date {ln.date}, same amount ${ln.amount}"],
+                          f"Same code {ln.code}, same date {ln.date}, same amount ${ln.amount:,.2f}"],
                 amount_at_stake=ln.amount,
             ))
         else:
@@ -102,15 +102,15 @@ def check_patient_balance(lines: list[BillLine], eob: list[EOBLine],
                           statement_balance: Decimal) -> list[CandidateFinding]:
     eob_owes = sum((r.patient_owes for r in eob), Decimal("0"))
     if statement_balance > eob_owes:
-        cites = [f"EOB line {r.code}: patient owes ${r.patient_owes} ({r.carc})" for r in eob]
+        cites = [f"EOB line {r.code}: patient owes ${r.patient_owes:,.2f} ({r.carc})" for r in eob]
         return [CandidateFinding(
             finding_id="F-BAL",
             kind="discrepancy",
             title="Statement balance exceeds the EOB patient responsibility",
             question="The statement asks for more than the explanation of benefits says "
                      "is owed. Can you reconcile the difference before I pay?",
-            evidence=[f"Statement balance: ${statement_balance}",
-                      f"EOB patient responsibility: ${eob_owes}"] + cites,
+            evidence=[f"Statement balance: ${statement_balance:,.2f}",
+                      f"EOB patient responsibility: ${eob_owes:,.2f}"] + cites,
             amount_at_stake=statement_balance - eob_owes,
         )]
     return []
