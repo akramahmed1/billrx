@@ -2,16 +2,18 @@
 import json
 import os
 import sys
+from decimal import Decimal
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import streamlit as st
 
-from ui.shared import inject_css, md, require_result
+from ui.shared import inject_css, md, require_result, step_kicker
 from src.pipeline import build_appeal_draft, build_phone_script
 
 inject_css()
 res = require_result()
+step_kicker(3, "Findings")
 
 # Progressive enhancement: keep the action bar visible while scrolling.
 # If the selector ever stops matching, the bar simply sits at the bottom.
@@ -27,6 +29,20 @@ st.markdown(
 
 st.header("Findings")
 st.caption("Check the findings you agree with. Nothing is drafted or sent until you approve.")
+
+kept_all = [r for r in res.reviewed if r.verdict == "KEEP"]
+rejected_all = [r for r in res.reviewed if r.verdict != "KEEP"]
+stake = sum((r.candidate.amount_at_stake for r in kept_all), Decimal("0"))
+s1, s2, s3 = st.columns(3)
+with s1:
+    st.markdown(f"<div class='rx-stat'><div class='rx-statnum'>{len(kept_all)}</div>"
+                f"<div class='rx-statlabel'>worth asking about</div></div>", unsafe_allow_html=True)
+with s2:
+    st.markdown(f"<div class='rx-stat'><div class='rx-statnum'>{md(f'${stake:,.2f}')}</div>"
+                f"<div class='rx-statlabel'>at stake</div></div>", unsafe_allow_html=True)
+with s3:
+    st.markdown(f"<div class='rx-stat'><div class='rx-statnum'>{len(rejected_all)}</div>"
+                f"<div class='rx-statlabel'>rejected by Reviewer</div></div>", unsafe_allow_html=True)
 
 ordered = sorted(res.reviewed, key=lambda r: 0 if r.verdict == "KEEP" else 1)
 for r in ordered:
