@@ -70,7 +70,8 @@ if res is None:
             st.session_state.pop(f"include_{r.candidate.finding_id}", None)
         st.session_state["res"] = res
         st.session_state["approved"] = False
-        for k in ("final_draft", "final_phone", "script_choice", "choice_asked"):
+        for k in ("final_draft", "final_phone", "script_choice", "choice_asked",
+                  "approved_count", "approved_ids"):
             st.session_state.pop(k, None)
         st.session_state["just_ran"] = True
         st.rerun()
