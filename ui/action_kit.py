@@ -67,7 +67,13 @@ if not st.session_state.get("kit_toasted"):
     st.toast("Dispute packet ready.", icon="✅")
 for (label, content, fname), tab in zip(tabs, st.tabs([t[0] for t in tabs])):
     with tab:
-        st.code(content, language=None)
+        import textwrap
+        wrapped = "\n".join(
+            textwrap.fill(line, width=96, break_long_words=False,
+                          break_on_hyphens=False) if len(line) > 96 else line
+            for line in content.splitlines()
+        )
+        st.code(wrapped, language=None)
         st.download_button("⬇️ Download", content, file_name=fname,
                            mime="text/plain", key=f"dl_{fname}")
 
