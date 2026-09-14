@@ -44,22 +44,41 @@ if st.button("Run BillRx audit", type="primary"):
 res = st.session_state.get("res")
 if res is None:
     st.markdown("### How it works")
-    steps = [
-        ("📄", "Extract",
-         "Agents read the itemized hospital bill and the explanation of benefits, line by line."),
-        ("🧮", "Verify",
-         "Deterministic code, not the model, checks every dollar figure with exact decimal math."),
-        ("🔍", "Review",
-         "A Reviewer agent challenges each candidate finding and may only judge after calling lookup tools."),
-        ("✅", "You approve",
-         "Nothing is drafted until a human selects which findings to include."),
-    ]
-    cols = st.columns(4)
-    for col, (icon, title, text) in zip(cols, steps):
-        with col:
-            with st.container(border=True):
-                st.markdown(f"**{icon} {title}**")
-                st.caption(text)
+    st.markdown(
+        """
+        <style>
+        .how-cards { display: flex; gap: 1rem; align-items: stretch; flex-wrap: wrap; }
+        .how-card { flex: 1 1 200px; border: 1px solid #E2E8F0; border-radius: 0.75rem;
+                    padding: 1.25rem 1.25rem 1.1rem; background: #FFFFFF; }
+        .how-icon { font-size: 1.6rem; line-height: 1; margin-bottom: 0.6rem; }
+        .how-title { font-weight: 700; font-size: 1.02rem; color: #1E293B; margin-bottom: 0.45rem; }
+        .how-text { color: #64748B; font-size: 0.9rem; line-height: 1.55; }
+        </style>
+        <div class="how-cards">
+          <div class="how-card">
+            <div class="how-icon">📄</div>
+            <div class="how-title">Extract</div>
+            <div class="how-text">Agents read the itemized hospital bill and the explanation of benefits, line by line.</div>
+          </div>
+          <div class="how-card">
+            <div class="how-icon">🧮</div>
+            <div class="how-title">Verify</div>
+            <div class="how-text">Deterministic code, not the model, checks every dollar figure with exact decimal math.</div>
+          </div>
+          <div class="how-card">
+            <div class="how-icon">🔍</div>
+            <div class="how-title">Review</div>
+            <div class="how-text">A Reviewer agent challenges each candidate finding and may only judge after calling lookup tools.</div>
+          </div>
+          <div class="how-card">
+            <div class="how-icon">✅</div>
+            <div class="how-title">You approve</div>
+            <div class="how-text">Nothing is drafted until a human selects which findings to include.</div>
+          </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
     st.caption("Demo case: 8 hospital bill lines, 8 EOB records, 4 candidate findings. "
                "Press **Run BillRx audit** above to analyze them.")
     st.stop()
