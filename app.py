@@ -9,7 +9,7 @@ import streamlit as st
 from src.pipeline import Pipeline, build_appeal_draft, build_phone_script
 import json
 
-st.set_page_config(page_title="BillRx", layout="wide")
+st.set_page_config(page_title="BillRx", page_icon="🧾", layout="wide")
 
 st.title("BillRx")
 st.caption("An evidence-first agent that helps people investigate confusing medical bills.")
@@ -19,10 +19,18 @@ st.warning("Research prototype. All data on this page is synthetic and fictional
 
 ICONS = {"start": "⚙️", "tool": "🔍", "decision": "🧠", "gate": "⏸️", "done": "✅"}
 
+
+def _short(text, n=110):
+    t = " ".join(str(text).split())
+    return t if len(t) <= n else t[:n - 1] + "…"
+
+
 if st.button("Run BillRx audit", type="primary"):
     pipe = Pipeline()
     with st.spinner("Agents working..."):
         res = pipe.run("data/synthetic_bill.json", "data/synthetic_eob.json")
+    for r in res.reviewed:
+        st.session_state.pop(r.candidate.finding_id, None)
     st.session_state["res"] = res
     st.session_state["approved"] = False
     st.session_state.pop("final_draft", None)
@@ -30,14 +38,33 @@ if st.button("Run BillRx audit", type="primary"):
 
 res = st.session_state.get("res")
 if res is None:
-    st.info("Press **Run BillRx audit** to analyze the synthetic bill and EOB.")
+    st.markdown("### How it works")
+    steps = [
+        ("📄", "Extract",
+         "Agents read the itemized hospital bill and the explanation of benefits, line by line."),
+        ("🧮", "Verify",
+         "Deterministic code, not the model, checks every dollar figure with exact decimal math."),
+        ("🔍", "Review",
+         "A Reviewer agent challenges each candidate finding and may only judge after calling lookup tools."),
+        ("✅", "You approve",
+         "Nothing is drafted until a human selects which findings to include."),
+    ]
+    cols = st.columns(4)
+    for col, (icon, title, text) in zip(cols, steps):
+        with col:
+            with st.container(border=True):
+                st.markdown(f"**{icon} {title}**")
+                st.caption(text)
+    st.caption("Demo case: 8 hospital bill lines, 8 EOB records, 4 candidate findings. "
+               "Press **Run BillRx audit** above to analyze them.")
     st.stop()
 
 # ---- trace sidebar ----
 with st.sidebar:
     st.header("Agent trace")
     for t in res.trace:
-        st.markdown(f"`{t.seq:02d}` {ICONS.get(t.kind, 'ℹ️')} **{t.agent}**: {t.text}")
+        st.markdown(f"`{t.seq:02d}` {ICONS.get(t.kind, 'ℹ️')} **{t.agent}**")
+        st.caption(_short(t.text))
 
 # ---- claim delta ----
 st.header(f"${res.delta:,.2f} difference worth investigating")
@@ -66,11 +93,11 @@ for r in res.reviewed:
 # ---- approval gate ----
 st.header("Human approval gate")
 kept = [r for r in res.reviewed if r.verdict == "KEEP"]
-st.write("Nothing below is sent anywhere. Select the findings to include, then approve.")
+st.write("Nothing below is sent anywhere. Check the findings you agree with, then approve.")
 selected = []
 for r in kept:
     if st.checkbox(f"Include: {r.candidate.title} (${r.candidate.amount_at_stake:,.2f})",
-                   value=True, key=r.candidate.finding_id):
+                   value=False, key=r.candidate.finding_id):
         selected.append(r)
 
 if st.button("Approve and generate dispute packet"):
