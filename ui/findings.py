@@ -73,6 +73,14 @@ with st.container(border=True):
             st.session_state["final_draft"] = build_appeal_draft(selected, bill, eob)
             st.session_state["final_phone"] = build_phone_script(selected)
             st.session_state["approved"] = True
+            # Snapshot the approval in plain session keys: widget state for the
+            # checkboxes does not survive the page switch, so never recompute
+            # the count from it on the action-kit page.
+            st.session_state["approved_count"] = len(selected)
+            st.session_state["approved_ids"] = [r.candidate.finding_id for r in selected]
+            # Re-ask the script choice on every new approval.
+            for k in ("script_choice", "choice_asked", "kit_toasted"):
+                st.session_state.pop(k, None)
             st.switch_page("ui/action_kit.py")
 
 if c1.button("← Back to investigation", use_container_width=True):
