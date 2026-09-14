@@ -68,6 +68,11 @@ Two modes, one contract:
 - Real: the pipeline architecture, the deterministic checker, the Strands agent
   wiring, the tool-calling behavior, the trace ledger.
 
+## Roadmap
+
+- Bring your own bill: enter your own itemized charges and EOB lines and run the
+  same deterministic pipeline on them. Processed in memory only, never stored.
+
 ## Disclaimer
 
 Research prototype for the AWS Agents for Humans hackathon. BillRx does not
