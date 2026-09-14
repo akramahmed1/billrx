@@ -13,9 +13,8 @@ res = require_result()
 require_approved()
 
 st.header("Your action kit")
-kept_ids = [r.candidate.finding_id for r in res.reviewed
-            if st.session_state.get(f"include_{r.candidate.finding_id}")]
-st.caption(f"Dispute packet approved by you, built from {len(kept_ids)} selected finding(s). "
+n_approved = st.session_state.get("approved_count", 0)
+st.caption(f"Dispute packet approved by you, built from {n_approved} selected finding(s). "
            "Nothing has been sent anywhere.")
 
 
