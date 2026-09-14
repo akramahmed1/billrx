@@ -51,7 +51,10 @@ for r in ordered:
             unsafe_allow_html=True,
         )
     if r.verdict == "KEEP":
-        st.checkbox("Include in my dispute", key=f"include_{c.finding_id}")
+        prev = st.session_state.get("approved_ids") or []
+        st.checkbox("Include in my dispute",
+                    value=(c.finding_id in prev),
+                    key=f"include_{c.finding_id}")
     with st.expander("Reviewer note and tools"):
         st.write(md(r.reason))
         st.caption(f"Tools consulted: {', '.join(r.tools_called)}")
