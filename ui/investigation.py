@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import streamlit as st
 
-from ui.shared import inject_css, md, require_result, step_kicker
+from ui.shared import h, inject_css, md, require_result, step_kicker
 
 inject_css()
 res = require_result()
@@ -70,7 +70,7 @@ with st.expander(f"🧮 Step 2: Verify - {len(res.reviewed)} candidate findings"
          f"{_usd(res.delta)} difference: candidate"),
     ]:
         st.markdown(f"✅ **{md(name)}:** {md(val)} "
-                    f"<span class='rx-label'>- {md(note)}</span>",
+                    f"<span class='rx-label'>- {h(note)}</span>",
                     unsafe_allow_html=True)
 
 with st.expander(f"🔍 Step 3: Review - {n_keep} kept, {len(res.reviewed) - n_keep} rejected"):
@@ -79,11 +79,11 @@ with st.expander(f"🔍 Step 3: Review - {n_keep} kept, {len(res.reviewed) - n_k
         chip = ('<span class="rx-chip rx-keep">Kept</span>' if r.verdict == "KEEP"
                 else '<span class="rx-chip rx-reject">Rejected</span>')
         st.markdown(f"{chip} **{md(r.candidate.title)}**<br>"
-                    f"<span class='rx-label'>Tools: {md(', '.join(r.tools_called))}</span>",
+                    f"<span class='rx-label'>Tools: {h(', '.join(r.tools_called))}</span>",
                     unsafe_allow_html=True)
 
 st.markdown("**Lookup tools consulted**<br>" + " ".join(
-    f'<span class="rx-pill">{md(t)}</span>' for t in tools),
+    f'<span class="rx-pill">{h(t)}</span>' for t in tools),
     unsafe_allow_html=True)
 
 rejected = [r for r in res.reviewed if r.verdict != "KEEP"]
@@ -95,9 +95,9 @@ if rejected:
             f"""
             <div class="rx-card">
               <span class="rx-chip rx-reject">Rejected by Reviewer</span>
-              <div><strong>{md(c.title)}</strong>
-              <span class="rx-label"> ({md(f'${c.amount_at_stake:,.2f}')} at stake)</span></div>
-              <div class="rx-steptext" style="margin-top:0.4rem">{md(r.reason)}</div>
+              <div><strong>{h(c.title)}</strong>
+              <span class="rx-label"> ({h(f'${c.amount_at_stake:,.2f}')} at stake)</span></div>
+              <div class="rx-steptext" style="margin-top:0.4rem">{h(r.reason)}</div>
             </div>
             """,
             unsafe_allow_html=True,
