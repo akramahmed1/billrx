@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import streamlit as st
 
-from ui.shared import inject_css, md, require_result, step_kicker
+from ui.shared import h, inject_css, md, require_result, step_kicker
 from src.pipeline import build_appeal_draft, build_phone_script
 
 inject_css()
@@ -38,7 +38,7 @@ with s1:
     st.markdown(f"<div class='rx-stat'><div class='rx-statnum'>{len(kept_all)}</div>"
                 f"<div class='rx-statlabel'>worth asking about</div></div>", unsafe_allow_html=True)
 with s2:
-    st.markdown(f"<div class='rx-stat'><div class='rx-statnum'>{md(f'${stake:,.2f}')}</div>"
+    st.markdown(f"<div class='rx-stat'><div class='rx-statnum'>{h(f'${stake:,.2f}')}</div>"
                 f"<div class='rx-statlabel'>at stake</div></div>", unsafe_allow_html=True)
 with s3:
     st.markdown(f"<div class='rx-stat'><div class='rx-statnum'>{len(rejected_all)}</div>"
@@ -55,12 +55,12 @@ for r in ordered:
             f"""
             <div class="rx-card">
               {chip}
-              <div><strong>{md(c.title)}</strong>
-              <span class="rx-label"> ({md(f'${c.amount_at_stake:,.2f}')} at stake)</span></div>
-              <div style="margin-top:0.45rem"><strong>Question to ask:</strong> {md(c.question)}</div>
+              <div><strong>{h(c.title)}</strong>
+              <span class="rx-label"> ({h(f'${c.amount_at_stake:,.2f}')} at stake)</span></div>
+              <div style="margin-top:0.45rem"><strong>Question to ask:</strong> {h(c.question)}</div>
               <div style="margin-top:0.45rem"><strong>Key evidence</strong></div>
               <div class="rx-steptext" style="text-align:left"><ul style="margin:0.2rem 0 0 1.1rem;padding:0">"""
-            + "".join(f"<li>{md(e)}</li>" for e in c.evidence[:3]) +
+            + "".join(f"<li>{h(e)}</li>" for e in c.evidence[:3]) +
             """</ul></div>
             </div>
             """,
