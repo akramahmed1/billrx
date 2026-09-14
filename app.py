@@ -25,6 +25,11 @@ def _short(text, n=110):
     return t if len(t) <= n else t[:n - 1] + "…"
 
 
+def _md(text):
+    # Escape $ so Streamlit does not treat $...$ as KaTeX math.
+    return str(text).replace("$", r"\$")
+
+
 if st.button("Run BillRx audit", type="primary"):
     pipe = Pipeline()
     with st.spinner("Agents working..."):
@@ -83,11 +88,11 @@ for r in res.reviewed:
     badge = "✅ Worth asking about" if r.verdict == "KEEP" else "🛑 Rejected by Reviewer"
     with st.expander(f"{badge} — {c.title} (${c.amount_at_stake:,.2f})",
                      expanded=(r.verdict == "KEEP")):
-        st.markdown(f"**Question to ask:** {c.question}")
+        st.markdown(f"**Question to ask:** {_md(c.question)}")
         st.markdown("**Evidence**")
         for e in c.evidence:
-            st.markdown(f"- {e}")
-        st.markdown(f"**Reviewer:** {r.reason}")
+            st.markdown(f"- {_md(e)}")
+        st.markdown(f"**Reviewer:** {_md(r.reason)}")
         st.caption(f"Tools consulted: {', '.join(r.tools_called)}")
 
 # ---- approval gate ----
