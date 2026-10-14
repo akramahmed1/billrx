@@ -7,15 +7,11 @@ from __future__ import annotations
 
 from decimal import Decimal
 
-from .models import BillLine, CandidateFinding, EOBLine
+from datetime import date
+from itertools import combinations
 
-# Minimal NCCI-style pair table, scoped to the synthetic demo scenario.
-# (code_a, code_b) -> relationship note. The Reviewer interprets these via tools.
-NCCI_PAIRS = {
-    ("80048", "80053"): "Basic Metabolic Panel (80048) is a component of "
-                        "Comprehensive Metabolic Panel (80053). Billing both together "
-                        "may be unbundling unless a modifier is documented.",
-}
+from .models import BillLine, CandidateFinding, EOBLine
+from .refdata import NCCI_BYPASS_MODIFIERS, ReferenceData, get_reference_data
 
 # E/M codes that make the checker raise a *weak* possible-bundle hypothesis
 # for venipuncture. Designed to be rejected by the Reviewer (honest negative).
@@ -61,21 +57,56 @@ def check_duplicates(lines: list[BillLine]) -> list[CandidateFinding]:
     return findings
 
 
-def check_unbundling(lines: list[BillLine]) -> list[CandidateFinding]:
-    findings = []
-    codes = {ln.code for ln in lines}
-    for (component, comprehensive), note in NCCI_PAIRS.items():
-        if component in codes and comprehensive in codes:
-            comp_lines = [str(ln.line_no) for ln in lines if ln.code == component]
+def _dos(value: str) -> date | None:
+    try:
+        return date.fromisoformat(value)
+    except ValueError:
+        return None
+
+
+def check_unbundling(lines: list[BillLine],
+                     refdata: ReferenceData | None = None) -> list[CandidateFinding]:
+    """NCCI PTP edits between codes billed on the same date of service.
+
+    Uses the edit active on that date. Indicator "1" edits are bypassed when the
+    component line carries an NCCI-associated modifier; indicator "0" edits can
+    never be bypassed; indicator "9" edits are not applicable.
+    """
+    ref = refdata or get_reference_data()
+    findings: list[CandidateFinding] = []
+    seen: set[tuple[str, str]] = set()
+    by_date: dict[str, list[BillLine]] = {}
+    for ln in lines:
+        by_date.setdefault(ln.date, []).append(ln)
+    for dos_str, day_lines in by_date.items():
+        codes = sorted({ln.code for ln in day_lines})
+        for a, b in combinations(codes, 2):
+            edit = ref.ptp_edit(a, b, _dos(dos_str))
+            if edit is None or edit.modifier_indicator == "9":
+                continue
+            component, comprehensive = edit.column2, edit.column1
+            comp = [ln for ln in day_lines if ln.code == component]
+            if edit.modifier_indicator == "1":
+                comp = [ln for ln in comp if not (set(ln.modifiers) & NCCI_BYPASS_MODIFIERS)]
+            if not comp or (component, comprehensive) in seen:
+                continue
+            seen.add((component, comprehensive))
+            pages = sorted({ln.page for ln in comp})
+            question = (
+                "Was a modifier documented to justify billing these two codes together? "
+                "If not, can the component charge be reviewed?"
+                if edit.modifier_indicator == "1" else
+                "NCCI does not allow these two codes to be billed together on the same "
+                "date, even with a modifier. Can the component charge be reviewed?")
             findings.append(CandidateFinding(
                 finding_id=f"F-UNB-{component}-{comprehensive}",
                 kind="unbundling",
                 title=f"Possible unbundling: {component} billed alongside {comprehensive}",
-                question="Was a modifier documented to justify billing these two codes "
-                         "together? If not, can the component charge be reviewed?",
-                evidence=[f"Bill p.1, line(s) {', '.join(comp_lines)} (code {component})",
-                          f"NCCI relationship: {note}"],
-                amount_at_stake=sum(ln.amount for ln in lines if ln.code == component),
+                question=question,
+                evidence=[f"Bill p.{','.join(map(str, pages))}, line(s) "
+                          f"{', '.join(str(ln.line_no) for ln in comp)} (code {component})",
+                          f"NCCI relationship: {edit.rationale}"],
+                amount_at_stake=sum((ln.amount for ln in comp), Decimal("0")),
             ))
     return findings
 
@@ -117,11 +148,12 @@ def check_patient_balance(lines: list[BillLine], eob: list[EOBLine],
 
 
 def run_all_checks(lines: list[BillLine], eob: list[EOBLine],
-                   stated_total: Decimal, statement_balance: Decimal) -> list[CandidateFinding]:
+                   stated_total: Decimal, statement_balance: Decimal,
+                   refdata: ReferenceData | None = None) -> list[CandidateFinding]:
     findings: list[CandidateFinding] = []
     findings += check_bill_total(lines, stated_total)
     findings += check_duplicates(lines)
-    findings += check_unbundling(lines)
+    findings += check_unbundling(lines, refdata)
     findings += check_possible_bundle(lines)
     findings += check_patient_balance(lines, eob, statement_balance)
     return findings

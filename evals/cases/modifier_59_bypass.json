@@ -1,0 +1,53 @@
+{
+  "name": "modifier_59_bypass",
+  "description": "Component billed with a documented 59 modifier: no unbundling question.",
+  "bill": {
+    "date_of_service": "2026-09-01",
+    "statement_total": "910.00",
+    "statement_balance_due": "0.00",
+    "lines": [
+      {
+        "line_no": 1,
+        "code": "80053",
+        "description": "Comprehensive metabolic panel",
+        "date": "2026-09-01",
+        "amount": "620.00"
+      },
+      {
+        "line_no": 2,
+        "code": "80048",
+        "description": "Basic metabolic panel",
+        "date": "2026-09-01",
+        "amount": "290.00",
+        "modifiers": [
+          "59"
+        ]
+      }
+    ],
+    "notice": "SYNTHETIC DATA - ENTIRELY FICTIONAL"
+  },
+  "eob": {
+    "lines": [
+      {
+        "code": "80053",
+        "billed": "620.00",
+        "allowed": "480.00",
+        "adjustment": "140.00",
+        "carc": "CO-45",
+        "patient_owes": "0.00"
+      },
+      {
+        "code": "80048",
+        "billed": "290.00",
+        "allowed": "200.00",
+        "adjustment": "90.00",
+        "carc": "CO-45",
+        "patient_owes": "0.00"
+      }
+    ]
+  },
+  "expected": {
+    "candidates": [],
+    "verdicts": {}
+  }
+}

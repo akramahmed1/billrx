@@ -1,0 +1,35 @@
+{
+  "name": "clean_office_visit",
+  "description": "Nothing to question.",
+  "bill": {
+    "date_of_service": "2026-09-01",
+    "statement_total": "150.00",
+    "statement_balance_due": "20.00",
+    "lines": [
+      {
+        "line_no": 1,
+        "code": "99213",
+        "description": "Office visit, established patient",
+        "date": "2026-09-01",
+        "amount": "150.00"
+      }
+    ],
+    "notice": "SYNTHETIC DATA - ENTIRELY FICTIONAL"
+  },
+  "eob": {
+    "lines": [
+      {
+        "code": "99213",
+        "billed": "150.00",
+        "allowed": "100.00",
+        "adjustment": "50.00",
+        "carc": "PR-3",
+        "patient_owes": "20.00"
+      }
+    ]
+  },
+  "expected": {
+    "candidates": [],
+    "verdicts": {}
+  }
+}

@@ -1,0 +1,8 @@
+"CPT codes, descriptions and other data only are copyright 2025 American Medical Association. All Rights Reserved."
+"Medicare NCCI Practitioner PTP Edits - SAMPLE FIXTURE FOR TESTS (format only, not real edit data)"
+Column 1,Column 2,"*=in existence prior to 1996",Effective Date,Deletion Date *=no data,"Modifier 0=not allowed 1=allowed 9=not applicable",PTP Edit Rationale
+80053,80048,*,19960101,*,1,Laboratory panel
+43239,43235,*,19960101,*,1,Standards of medical / surgical practice
+99999,11111,,20200101,*,0,Mutually exclusive procedures
+22222,33333,,20200101,20250101,1,Deleted edit
+44444,55555,,20200101,*,9,Not applicable

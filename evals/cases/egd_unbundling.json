@@ -1,0 +1,46 @@
+{
+  "name": "egd_unbundling",
+  "description": "Diagnostic EGD billed with EGD with biopsy, no modifier.",
+  "bill": {
+    "date_of_service": "2026-09-01",
+    "statement_total": "3100.00",
+    "statement_balance_due": "0.00",
+    "lines": [
+      {
+        "line_no": 1,
+        "code": "43239",
+        "description": "EGD with biopsy",
+        "date": "2026-09-01",
+        "amount": "1900.00"
+      },
+      {
+        "line_no": 2,
+        "code": "43235",
+        "description": "Diagnostic EGD",
+        "date": "2026-09-01",
+        "amount": "1200.00"
+      }
+    ],
+    "notice": "SYNTHETIC DATA - ENTIRELY FICTIONAL"
+  },
+  "eob": {
+    "lines": [
+      {
+        "code": "43239",
+        "billed": "1900.00",
+        "allowed": "900.00",
+        "adjustment": "1000.00",
+        "carc": "CO-45",
+        "patient_owes": "0.00"
+      }
+    ]
+  },
+  "expected": {
+    "candidates": [
+      "F-UNB-43235-43239"
+    ],
+    "verdicts": {
+      "F-UNB-43235-43239": "KEEP"
+    }
+  }
+}

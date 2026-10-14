@@ -1,0 +1,54 @@
+{
+  "name": "total_mismatch",
+  "description": "Printed total is higher than the line items add up to.",
+  "bill": {
+    "date_of_service": "2026-09-01",
+    "statement_total": "1010.00",
+    "statement_balance_due": "0.00",
+    "lines": [
+      {
+        "line_no": 1,
+        "code": "71045",
+        "description": "Chest X-ray, single view",
+        "date": "2026-09-01",
+        "amount": "560.00"
+      },
+      {
+        "line_no": 2,
+        "code": "93000",
+        "description": "Electrocardiogram",
+        "date": "2026-09-01",
+        "amount": "350.00"
+      }
+    ],
+    "notice": "SYNTHETIC DATA - ENTIRELY FICTIONAL"
+  },
+  "eob": {
+    "lines": [
+      {
+        "code": "71045",
+        "billed": "560.00",
+        "allowed": "210.00",
+        "adjustment": "350.00",
+        "carc": "CO-45",
+        "patient_owes": "0.00"
+      },
+      {
+        "code": "93000",
+        "billed": "350.00",
+        "allowed": "250.00",
+        "adjustment": "100.00",
+        "carc": "CO-45",
+        "patient_owes": "0.00"
+      }
+    ]
+  },
+  "expected": {
+    "candidates": [
+      "F-TOTAL"
+    ],
+    "verdicts": {
+      "F-TOTAL": "KEEP"
+    }
+  }
+}

@@ -6,34 +6,7 @@ live mode and called directly by the scripted fallback in mock mode.
 """
 from __future__ import annotations
 
-# Synthetic NCCI Procedure-to-Procedure edit table, scoped to the demo scenario.
-# (component_code, comprehensive_code) -> policy fact.
-NCCI_PTP_EDITS = {
-    ("80048", "80053"): {
-        "relationship": "component-to-comprehensive",
-        "description": "Basic Metabolic Panel (80048) is a component of Comprehensive "
-                       "Metabolic Panel (80053).",
-        "modifier_bypass_possible": True,
-        "note": "Both may be billed together only with a documented modifier (e.g. 59/XS).",
-    },
-    ("43235", "43239"): {
-        "relationship": "component-to-comprehensive",
-        "description": "Diagnostic EGD (43235) is bundled into EGD with biopsy (43239).",
-        "modifier_bypass_possible": True,
-        "note": "Both may be billed together only with a documented modifier.",
-    },
-}
-
-# Synthetic Claim Adjustment Reason Code (CARC) explanations, demo scope.
-EOB_CARC_CODES = {
-    "CO-45": "Charge exceeds fee schedule / maximum allowable amount. Contractual adjustment; "
-             "not the patient's responsibility.",
-    "CO-97": "The benefit for this service is included in the payment/allowance for another "
-             "service already adjudicated.",
-    "PR-1": "Deductible amount. Patient responsibility.",
-    "PR-2": "Coinsurance amount. Patient responsibility.",
-    "PR-3": "Copayment amount. Patient responsibility.",
-}
+from ..refdata import get_reference_data
 
 
 def lookup_ncci_edit(code_a: str, code_b: str) -> dict:
@@ -42,26 +15,47 @@ def lookup_ncci_edit(code_a: str, code_b: str) -> dict:
     Returns the policy FACT; it does not judge the bill.
     """
     a, b = code_a.strip(), code_b.strip()
-    for pair in ((a, b), (b, a)):
-        if pair in NCCI_PTP_EDITS:
-            return {"match": True, "component_code": pair[0],
-                    "comprehensive_code": pair[1], **NCCI_PTP_EDITS[pair]}
-    return {"match": False,
-            "detail": f"No NCCI unbundling edit exists between {a} and {b}."}
+    ref = get_reference_data()
+    edit = ref.ptp_edit(a, b)
+    if edit is None or edit.modifier_indicator == "9":
+        return {"match": False, "source": ref.source,
+                "detail": f"No NCCI unbundling edit exists between {a} and {b}."}
+    return {
+        "match": True,
+        "source": ref.source,
+        "component_code": edit.column2,
+        "comprehensive_code": edit.column1,
+        "relationship": "component-to-comprehensive",
+        "description": edit.rationale,
+        "modifier_bypass_possible": edit.modifier_indicator == "1",
+        "note": ("Both may be billed together only with a documented modifier (e.g. 59/XS)."
+                 if edit.modifier_indicator == "1"
+                 else "No modifier can bypass this edit."),
+        "effective": edit.effective.isoformat(),
+    }
 
 
 def lookup_eob_remark(carc_code: str) -> dict:
     """Explain a Claim Adjustment Reason Code from the EOB. Facts only."""
     code = carc_code.strip().upper()
-    if code in EOB_CARC_CODES:
-        return {"code": code, "found": True, "explanation": EOB_CARC_CODES[code]}
+    explanation = get_reference_data().carc(code)
+    if explanation:
+        return {"code": code, "found": True, "explanation": explanation}
     return {"code": code, "found": False,
             "explanation": "Unknown or unlisted remark code."}
 
 
 def inspect_evidence(citation: str, bill_text: str) -> dict:
-    """Return the raw bill text around a citation so the agent can verify context.
+    """Return the bill lines a citation points at, so the agent can verify context.
 
-    In the demo this searches the synthetic bill text; it never invents content.
+    Citations look like "Bill p.1, lines 2 and 3". Only text that exists in the
+    bill is returned; nothing is invented. Falls back to the start of the bill
+    when no line numbers can be read from the citation.
     """
-    return {"citation": citation, "context": bill_text[:2000]}
+    import re
+
+    wanted = {int(n) for n in re.findall(r"\b(\d+)\b", citation.split(",", 1)[-1])}
+    matched = [ln for ln in bill_text.splitlines()
+               if (m := re.match(r"Line (\d+):", ln)) and int(m.group(1)) in wanted]
+    context = "\n".join(matched) if matched else bill_text[:2000]
+    return {"citation": citation, "context": context, "matched_lines": len(matched)}

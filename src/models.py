@@ -14,6 +14,8 @@ class BillLine:
     date: str
     amount: Decimal
     page: int = 1
+    units: int = 1
+    modifiers: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
