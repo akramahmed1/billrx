@@ -1,0 +1,50 @@
+{
+  "name": "same_code_different_days",
+  "description": "Two visits on different days are not duplicates.",
+  "bill": {
+    "date_of_service": "2026-09-01",
+    "statement_total": "300.00",
+    "statement_balance_due": "40.00",
+    "lines": [
+      {
+        "line_no": 1,
+        "code": "99213",
+        "description": "Office visit",
+        "date": "2026-09-01",
+        "amount": "150.00"
+      },
+      {
+        "line_no": 2,
+        "code": "99213",
+        "description": "Office visit",
+        "date": "2026-09-08",
+        "amount": "150.00"
+      }
+    ],
+    "notice": "SYNTHETIC DATA - ENTIRELY FICTIONAL"
+  },
+  "eob": {
+    "lines": [
+      {
+        "code": "99213",
+        "billed": "150.00",
+        "allowed": "100.00",
+        "adjustment": "50.00",
+        "carc": "PR-3",
+        "patient_owes": "20.00"
+      },
+      {
+        "code": "99213",
+        "billed": "150.00",
+        "allowed": "100.00",
+        "adjustment": "50.00",
+        "carc": "PR-3",
+        "patient_owes": "20.00"
+      }
+    ]
+  },
+  "expected": {
+    "candidates": [],
+    "verdicts": {}
+  }
+}

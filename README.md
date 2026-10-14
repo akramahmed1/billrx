@@ -68,6 +68,21 @@ Two modes, one contract:
 - Real: the pipeline architecture, the deterministic checker, the Strands agent
   wiring, the tool-calling behavior, the trace ledger.
 
+## Production foundation
+
+- **Upload a real bill:** `src/intake` reads PDFs, scanned PDFs and phone photos
+  (text layer, then OCR), and every extracted line must be confirmed by a person
+  before the audit runs.
+- **Real CMS data:** `src/refdata` loads NCCI procedure-to-procedure edits
+  (`scripts/fetch_reference_data.py`, then set `BILLRX_NCCI_PTP_CSV`). Demo
+  tables stay the default.
+- **Multi-tenant database:** `db/migrations/0001_tenancy.sql` gives personal,
+  advocate-practice and employer workspaces with row-level security, roles,
+  signed approvals and an append-only audit log.
+- **Evals:** `python -m evals.run_evals` (add `MODEL_PROVIDER=bedrock` for the
+  live model).
+- Plan and compliance track: `docs/PRODUCTION_PLAN.md`.
+
 ## Roadmap
 
 - Bring your own bill: enter your own itemized charges and EOB lines and run the
